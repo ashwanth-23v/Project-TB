@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toxic Relationship Scenarios Game</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #ffafbd, #ffc3a0);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            color: #4A4A4A;
+            margin-bottom: 20px;
+        }
+        .scenario {
+            margin: 20px 0;
+            font-size: 1.2em;
+            font-weight: bold;
+            line-height: 1.5;
+        }
+        .choices {
+            margin: 10px 0;
+        }
+        button {
+            margin: 5px;
+            padding: 10px;
+            cursor: pointer;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            width: 100%;
+            font-size: 1em;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #feedback {
+            margin-top: 10px;
+            font-weight: bold;
+            text-align: center;
+            font-size: 1.1em;
+        }
+        #summary {
+            margin-top: 20px;
+            font-size: 1.2em;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Toxic Relationship Scenarios Game</h1>
+        <div id="game"></div>
+        <div id="feedback"></div>
+        <div id="summary"></div>
+    </div>
+
+    <script>
+        const scenarios = [
+            {
+                question: "Scenario 1: The Critic\nYour partner constantly criticizes your appearance and decisions.",
+                choices: [
+                    "Ignore the comments.",
+                    "Confront your partner about their behavior.",
+                    "Start changing your appearance to please them."
+                ],
+                correctIndex: 1,
+                feedback: "Good choice! Open communication is crucial."
+            },
+            {
+                question: "Scenario 2: The Isolator\nYour partner doesn’t want you to spend time with your friends or family.",
+                choices: [
+                    "Agree to avoid conflict.",
+                    "Talk to your partner about the importance of your friendships.",
+                    "Sneak out to see your friends."
+                ],
+                correctIndex: 1,
+                feedback: "Good choice! Maintaining friendships is important."
+            },
+            {
+                question: "Scenario 3: The Gaslighter\nYour partner frequently denies saying things you clearly remember.",
+                choices: [
+                    "Doubt your memory.",
+                    "Keep a record of conversations for reference.",
+                    "Bring it up casually later."
+                ],
+                correctIndex: 1,
+                feedback: "Good choice! Keeping records can help validate your experiences."
+            },
+            {
+                question: "Scenario 4: The Jealous Partner\nYour partner often checks your phone and questions your friendships.",
+                choices: [
+                    "Reassure them repeatedly.",
+                    "Set boundaries about trust in your relationship.",
+                    "Break up with them immediately."
+                ],
+                correctIndex: 1,
+                feedback: "Good choice! Setting boundaries promotes healthy trust."
+            },
+            {
+                question: "Scenario 5: The Blamer\nYour partner often blames you for their unhappiness.",
+                choices: [
+                    "Accept the blame to avoid a fight.",
+                    "Tell them that their happiness is their responsibility.",
+                    "Ignore them and focus on your own happiness."
+                ],
+                correctIndex: 1,
+                feedback: "Good choice! It's important to hold individuals accountable for their feelings."
+            },
+            {
+                question: "Scenario 6: The Giver\nYour partner expects you to do everything for them, without reciprocating.",
+                choices: [
+                    "Keep giving to make them happy.",
+                    "Discuss the importance of mutual support.",
+                    "Stop talking to them altogether."
+                ],
+                correctIndex: 1,
+                feedback: "Good choice! Mutual support is essential in a relationship."
+            },
+            {
+                question: "Scenario 7: The Liar\nYour partner often lies about small things.",
+                choices: [
+                    "Brush it off as not important.",
+                    "Ask them why they feel the need to lie.",
+                    "Start lying back to them."
+                ],
+                correctIndex: 1,
+                feedback: "Good choice! Understanding the reasons behind their behavior can help."
+            },
+            {
+                question: "Scenario 8: The Control Freak\nYour partner insists on making all the plans and decisions.",
+                choices: [
+                    "Let them take control to avoid conflict.",
+                    "Express that you want to share the decision-making.",
+                    "Go along with it quietly."
+                ],
+                correctIndex: 1,
+                feedback: "Good choice! Sharing control is important for balance."
+            }
+        ];
+
+        let currentScenario = 0;
+        let score = 0;
+
+        function shuffleChoices(scenario) {
+            const choices = [...scenario.choices];
+            const correctChoice = choices[scenario.correctIndex];
+            choices.splice(scenario.correctIndex, 1);
+            choices.sort(() => Math.random() - 0.5);
+            const randomIndex = Math.floor(Math.random() * 3);
+            choices.splice(randomIndex, 0, correctChoice);
+            return choices;
+        }
+
+        function displayScenario() {
+            const gameDiv = document.getElementById("game");
+            const feedbackDiv = document.getElementById("feedback");
+            feedbackDiv.innerHTML = "";
+
+            if (currentScenario < scenarios.length) {
+                const scenario = scenarios[currentScenario];
+                const shuffledChoices = shuffleChoices(scenario);
+                gameDiv.innerHTML = `<div class="scenario">${scenario.question}</div><div class="choices">`;
+                
+                shuffledChoices.forEach((choice, index) => {
+                    gameDiv.innerHTML += `<button onclick="selectChoice('${choice}', ${scenario.correctIndex})">${choice}</button>`;
+                });
+
+                gameDiv.innerHTML += '</div>';
+            } else {
+                displaySummary();
+            }
+        }
+
+        function selectChoice(selectedChoice, correctIndex) {
+            const scenario = scenarios[currentScenario];
+            const feedbackDiv = document.getElementById("feedback");
+
+            if (selectedChoice === scenario.choices[correctIndex]) {
+                feedbackDiv.innerHTML = "Good choice! " + scenario.feedback;
+                score++;
+            } else {
+                feedbackDiv.innerHTML = "Not the best choice. " + scenario.feedback;
+            }
+
+            currentScenario++;
+            setTimeout(displayScenario, 3000); // Wait for 3 seconds before showing the next scenario
+        }
+
+        function displaySummary() {
+            const gameDiv = document.getElementById("game");
+            const summaryDiv = document.getElementById("summary");
+            gameDiv.innerHTML = "";
+            summaryDiv.innerHTML = `<h2>Your Score: ${score} out of ${scenarios.length}</h2>`;
+            summaryDiv.innerHTML += "<p>Thank you for playing! Reflect on what you've learned about toxic relationships.</p>";
+            summaryDiv.innerHTML += "<p>Consider reaching out to a trusted friend or professional if you encounter toxic behavior in your life.</p>";
+        }
+
+        // Start the game
+        displayScenario();
+    </script>
+
+</body>
+</html>
